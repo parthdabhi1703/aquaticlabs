@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marine Biodiversity & Ocean Data Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <button class="mobile-menu-toggle" id="mobileToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="header-title">Marine Biodiversity & Ocean Data Platform</h1>
+                <div class="header-actions">
+                    <button class="search-btn">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                    <button class="theme-toggle" id="themeToggle">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Main</h3>
+                    <a href="#" class="nav-link active" data-section="dashboard">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2V7"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-link" data-section="ocean-parameters">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Ocean Parameters
+                    </a>
+                    <a href="#" class="nav-link" data-section="fish-taxonomy">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        Fish Taxonomy
+                    </a>
+                    <a href="#" class="nav-link" data-section="dna-analysis">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                        </svg>
+                        DNA / eDNA
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Analytics</h3>
+                    <a href="#" class="nav-link" data-section="reports">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Reports
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <!-- Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">🌡️</div>
+                        <div class="metric-content">
+                            <h3 class="metric-title">Avg. Ocean Temperature</h3>
+                            <div class="metric-value">
+                                <span id="temp-value">24.2°C</span>
+                                <span class="metric-trend positive" id="temp-trend">▲ 0.3°C</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">💧</div>
+                        <div class="metric-content">
+                            <h3 class="metric-title">Avg. Salinity</h3>
+                            <div class="metric-value">
+                                <span id="salinity-value">35.2 PSU</span>
+                                <span class="metric-trend negative" id="salinity-trend">▼ 0.1 PSU</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">🐟</div>
+                        <div class="metric-content">
+                            <h3 class="metric-title">Species Recorded</h3>
+                            <div class="metric-value">
+                                <span id="species-value">2,847</span>
+                                <span class="metric-trend positive" id="species-trend">▲ 42</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">🧬</div>
+                        <div class="metric-content">
+                            <h3 class="metric-title">DNA Samples</h3>
+                            <div class="metric-value">
+                                <span id="dna-value">15,932</span>
+                                <span class="metric-trend positive" id="dna-trend">▲ 127</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Ocean Temperature Trends</h3>
+                            <button class="export-btn" onclick="exportChart('tempChart')">Export</button>
+                        </div>
+                        <canvas id="tempChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Species Count by Region</h3>
+                            <button class="export-btn" onclick="exportChart('speciesChart')">Export</button>
+                        </div>
+                        <canvas id="speciesChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>DNA Sample Classification</h3>
+                            <button class="export-btn" onclick="exportChart('dnaChart')">Export</button>
+                        </div>
+                        <canvas id="dnaChart"></canvas>
+                    </div>
+
+                    <!-- Map Container -->
+                    <div class="chart-container map-container">
+                        <div class="chart-header">
+                            <h3>Monitoring Stations</h3>
+                            <div class="map-controls">
+                                <button class="map-btn active" onclick="toggleMapView('satellite')">Satellite</button>
+                                <button class="map-btn" onclick="toggleMapView('terrain')">Terrain</button>
+                            </div>
+                        </div>
+                        <div id="map"></div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <h3>Recent Data Collection Activity</h3>
+                    <div class="activity-list" id="activityList">
+                        <div class="activity-item">
+                            <div class="activity-icon">📊</div>
+                            <div class="activity-content">
+                                <span class="activity-title">New temperature readings from Station Alpha</span>
+                                <span class="activity-time">2 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">🧬</div>
+                            <div class="activity-content">
+                                <span class="activity-title">DNA sample analysis completed for Atlantic Region</span>
+                                <span class="activity-time">5 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">🐟</div>
+                            <div class="activity-content">
+                                <span class="activity-title">New species identified: Thunnus albacares</span>
+                                <span class="activity-time">12 minutes ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Placeholder sections for other nav items -->
+            <section id="ocean-parameters-section" class="content-section">
+                <div class="section-header">
+                    <h2>Ocean Parameters</h2>
+                    <p>Real-time monitoring of critical oceanographic conditions</p>
+                </div>
+
+                <!-- Parameter Overview Cards -->
+                <div class="parameter-grid">
+                    <div class="parameter-card temperature">
+                        <div class="parameter-header">
+                            <div class="parameter-icon">🌡️</div>
+                            <div class="parameter-info">
+                                <h3>Temperature</h3>
+                                <span class="parameter-status normal">Normal Range</span>
+                            </div>
+                        </div>
+                        <div class="parameter-value">24.2°C</div>
+                        <div class="parameter-range">Range: 22-28°C</div>
+                        <div class="parameter-chart-mini" id="tempMiniChart"></div>
+                    </div>
+
+                    <div class="parameter-card salinity">
+                        <div class="parameter-header">
+                            <div class="parameter-icon">💧</div>
+                            <div class="parameter-info">
+                                <h3>Salinity</h3>
+                                <span class="parameter-status normal">Normal Range</span>
+                            </div>
+                        </div>
+                        <div class="parameter-value">35.2 PSU</div>
+                        <div class="parameter-range">Range: 34-36 PSU</div>
+                        <div class="parameter-chart-mini" id="salinityMiniChart"></div>
+                    </div>
+
+                    <div class="parameter-card ph">
+                        <div class="parameter-header">
+                            <div class="parameter-icon">⚗️</div>
+                            <div class="parameter-info">
+                                <h3>pH Level</h3>
+                                <span class="parameter-status warning">Slightly Low</span>
+                            </div>
+                        </div>
+                        <div class="parameter-value">7.9</div>
+                        <div class="parameter-range">Range: 7.8-8.2</div>
+                        <div class="parameter-chart-mini" id="phMiniChart"></div>
+                    </div>
+
+                    <div class="parameter-card oxygen">
+                        <div class="parameter-header">
+                            <div class="parameter-icon">🫧</div>
+                            <div class="parameter-info">
+                                <h3>Dissolved Oxygen</h3>
+                                <span class="parameter-status normal">Optimal</span>
+                            </div>
+                        </div>
+                        <div class="parameter-value">6.8 mg/L</div>
+                        <div class="parameter-range">Range: 5-8 mg/L</div>
+                        <div class="parameter-chart-mini" id="oxygenMiniChart"></div>
+                    </div>
+                </div>
+
+                <!-- Detailed Parameter Analysis -->
+                <div class="parameter-analysis-grid">
+                    <div class="analysis-card">
+                        <div class="chart-header">
+                            <h3>Multi-Parameter Correlation</h3>
+                            <div class="chart-controls">
+                                <select class="time-range-select">
+                                    <option>Last 24 Hours</option>
+                                    <option>Last Week</option>
+                                    <option>Last Month</option>
+                                </select>
+                            </div>
+                        </div>
+                        <canvas id="correlationChart"></canvas>
+                    </div>
+
+                    <div class="analysis-card">
+                        <div class="chart-header">
+                            <h3>Depth Profile Analysis</h3>
+                            <div class="depth-controls">
+                                <button class="depth-btn active" data-depth="surface">Surface</button>
+                                <button class="depth-btn" data-depth="mid">Mid-water</button>
+                                <button class="depth-btn" data-depth="deep">Deep</button>
+                            </div>
+                        </div>
+                        <canvas id="depthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Station Status Table -->
+                <div class="station-status-card">
+                    <div class="chart-header">
+                        <h3>Monitoring Station Status</h3>
+                        <button class="refresh-btn">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                    <div class="station-table-container">
+                        <table class="station-table">
+                            <thead>
+                                <tr>
+                                    <th>Station</th>
+                                    <th>Status</th>
+                                    <th>Temperature</th>
+                                    <th>Salinity</th>
+                                    <th>pH</th>
+                                    <th>Last Update</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stationTableBody">
+                                <tr>
+                                    <td>Arabian Sea Alpha</td>
+                                    <td><span class="status-badge online">Online</span></td>
+                                    <td>24.2°C</td>
+                                    <td>35.1 PSU</td>
+                                    <td>7.9</td>
+                                    <td>2 min ago</td>
+                                </tr>
+                                <tr>
+                                    <td>Konkan Coast Monitor</td>
+                                    <td><span class="status-badge online">Online</span></td>
+                                    <td>26.8°C</td>
+                                    <td>34.8 PSU</td>
+                                    <td>8.0</td>
+                                    <td>1 min ago</td>
+                                </tr>
+                                <tr>
+                                    <td>Kerala Coastal</td>
+                                    <td><span class="status-badge maintenance">Maintenance</span></td>
+                                    <td>25.5°C</td>
+                                    <td>35.2 PSU</td>
+                                    <td>7.8</td>
+                                    <td>15 min ago</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="fish-taxonomy-section" class="content-section">
+                <div class="section-header">
+                    <h2>Fish Taxonomy</h2>
+                    <p>Comprehensive species identification and classification system</p>
+                </div>
+
+                <!-- Taxonomy Overview -->
+                <div class="taxonomy-overview">
+                    <div class="taxonomy-stats">
+                        <div class="taxonomy-stat">
+                            <div class="stat-number">2,847</div>
+                            <div class="stat-label">Total Species</div>
+                        </div>
+                        <div class="taxonomy-stat">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">Families</div>
+                        </div>
+                        <div class="taxonomy-stat">
+                            <div class="stat-number">42</div>
+                            <div class="stat-label">Orders</div>
+                        </div>
+                        <div class="taxonomy-stat">
+                            <div class="stat-number">18</div>
+                            <div class="stat-label">Classes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Species Search and Filter -->
+                <div class="species-search-section">
+                    <div class="search-filter-bar">
+                        <div class="species-search-input">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <input type="text" placeholder="Search species by name, family, or characteristics...">
+                        </div>
+                        <div class="filter-controls">
+                            <select class="filter-select">
+                                <option>All Regions</option>
+                                <option>Arabian Sea</option>
+                                <option>Bay of Bengal</option>
+                                <option>Indian Ocean</option>
+                            </select>
+                            <select class="filter-select">
+                                <option>All Families</option>
+                                <option>Scombridae</option>
+                                <option>Clupeidae</option>
+                                <option>Carangidae</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Taxonomy Visualization -->
+                <div class="taxonomy-charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Species Distribution by Family</h3>
+                            <button class="export-btn" onclick="exportChart('familyChart')">Export</button>
+                        </div>
+                        <canvas id="familyChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Biodiversity Index by Region</h3>
+                            <button class="export-btn" onclick="exportChart('biodiversityChart')">Export</button>
+                        </div>
+                        <canvas id="biodiversityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Species Gallery -->
+                <div class="species-gallery-section">
+                    <div class="chart-header">
+                        <h3>Featured Species</h3>
+                        <div class="gallery-controls">
+                            <button class="gallery-btn active" data-category="all">All</button>
+                            <button class="gallery-btn" data-category="commercial">Commercial</button>
+                            <button class="gallery-btn" data-category="endangered">Endangered</button>
+                            <button class="gallery-btn" data-category="endemic">Endemic</button>
+                        </div>
+                    </div>
+                    <div class="species-grid" id="speciesGrid">
+                        <div class="species-card" data-category="commercial">
+                            <div class="species-image">🐟</div>
+                            <div class="species-info">
+                                <h4>Thunnus albacares</h4>
+                                <p class="species-common">Yellowfin Tuna</p>
+                                <div class="species-tags">
+                                    <span class="tag commercial">Commercial</span>
+                                    <span class="tag migratory">Migratory</span>
+                                </div>
+                                <div class="species-stats">
+                                    <span>Family: Scombridae</span>
+                                    <span>Samples: 342</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="species-card" data-category="commercial">
+                            <div class="species-image">🐠</div>
+                            <div class="species-info">
+                                <h4>Rastrelliger kanagurta</h4>
+                                <p class="species-common">Indian Mackerel</p>
+                                <div class="species-tags">
+                                    <span class="tag commercial">Commercial</span>
+                                    <span class="tag coastal">Coastal</span>
+                                </div>
+                                <div class="species-stats">
+                                    <span>Family: Scombridae</span>
+                                    <span>Samples: 567</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="species-card" data-category="endangered">
+                            <div class="species-image">🦈</div>
+                            <div class="species-info">
+                                <h4>Carcharodon carcharias</h4>
+                                <p class="species-common">Great White Shark</p>
+                                <div class="species-tags">
+                                    <span class="tag endangered">Endangered</span>
+                                    <span class="tag apex">Apex Predator</span>
+                                </div>
+                                <div class="species-stats">
+                                    <span>Family: Lamnidae</span>
+                                    <span>Samples: 23</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="species-card" data-category="endemic">
+                            <div class="species-image">🐡</div>
+                            <div class="species-info">
+                                <h4>Pristipomoides filamentosus</h4>
+                                <p class="species-common">Crimson Jobfish</p>
+                                <div class="species-tags">
+                                    <span class="tag endemic">Endemic</span>
+                                    <span class="tag deep-water">Deep Water</span>
+                                </div>
+                                <div class="species-stats">
+                                    <span>Family: Lutjanidae</span>
+                                    <span>Samples: 89</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="dna-analysis-section" class="content-section">
+                <div class="section-header">
+                    <h2>DNA / eDNA Analysis</h2>
+                    <p>Advanced genetic sequencing and environmental DNA detection</p>
+                </div>
+
+                <!-- DNA Analysis Overview -->
+                <div class="dna-overview-grid">
+                    <div class="dna-stat-card">
+                        <div class="dna-stat-icon">🧬</div>
+                        <div class="dna-stat-content">
+                            <div class="dna-stat-value">15,932</div>
+                            <div class="dna-stat-label">Total DNA Samples</div>
+                            <div class="dna-stat-trend">+127 this week</div>
+                        </div>
+                    </div>
+
+                    <div class="dna-stat-card">
+                        <div class="dna-stat-icon">🔬</div>
+                        <div class="dna-stat-content">
+                            <div class="dna-stat-value">2,341</div>
+                            <div class="dna-stat-label">eDNA Detections</div>
+                            <div class="dna-stat-trend">+89 this week</div>
+                        </div>
+                    </div>
+
+                    <div class="dna-stat-card">
+                        <div class="dna-stat-icon">🎯</div>
+                        <div class="dna-stat-content">
+                            <div class="dna-stat-value">98.7%</div>
+                            <div class="dna-stat-label">Accuracy Rate</div>
+                            <div class="dna-stat-trend">+0.3% improvement</div>
+                        </div>
+                    </div>
+
+                    <div class="dna-stat-card">
+                        <div class="dna-stat-icon">⚡</div>
+                        <div class="dna-stat-content">
+                            <div class="dna-stat-value">4.2h</div>
+                            <div class="dna-stat-label">Avg. Processing Time</div>
+                            <div class="dna-stat-trend">-0.8h faster</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DNA Analysis Charts -->
+                <div class="dna-charts-grid">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Sample Processing Pipeline</h3>
+                            <div class="pipeline-status">
+                                <span class="pipeline-indicator active">Processing: 23 samples</span>
+                            </div>
+                        </div>
+                        <canvas id="pipelineChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Species Detection Methods</h3>
+                            <button class="export-btn" onclick="exportChart('methodsChart')">Export</button>
+                        </div>
+                        <canvas id="methodsChart"></canvas>
+                    </div>
+
+                    <div class="chart-container dna-heatmap">
+                        <div class="chart-header">
+                            <h3>eDNA Concentration Heatmap</h3>
+                            <div class="heatmap-legend">
+                                <span class="legend-item low">Low</span>
+                                <span class="legend-item medium">Medium</span>
+                                <span class="legend-item high">High</span>
+                            </div>
+                        </div>
+                        <div class="heatmap-grid" id="dnaHeatmap">
+                            <!-- Heatmap cells will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Sequencing Results -->
+                <div class="sequencing-results-section">
+                    <div class="chart-header">
+                        <h3>Recent Sequencing Results</h3>
+                        <div class="result-filters">
+                            <button class="result-filter-btn active" data-filter="all">All</button>
+                            <button class="result-filter-btn" data-filter="completed">Completed</button>
+                            <button class="result-filter-btn" data-filter="processing">Processing</button>
+                            <button class="result-filter-btn" data-filter="pending">Pending</button>
+                        </div>
+                    </div>
+                    <div class="sequencing-list" id="sequencingList">
+                        <div class="sequencing-item">
+                            <div class="sequencing-status completed"></div>
+                            <div class="sequencing-content">
+                                <div class="sequencing-header">
+                                    <h4>Sample #DNA-2024-001247</h4>
+                                    <span class="sequencing-time">Completed 5 min ago</span>
+                                </div>
+                                <div class="sequencing-details">
+                                    <span class="sequencing-species">Thunnus albacares (Yellowfin Tuna)</span>
+                                    <span class="sequencing-confidence">Confidence: 99.2%</span>
+                                </div>
+                                <div class="sequencing-location">Location: Arabian Sea Station Alpha</div>
+                            </div>
+                            <button class="view-details-btn">View Details</button>
+                        </div>
+
+                        <div class="sequencing-item">
+                            <div class="sequencing-status processing"></div>
+                            <div class="sequencing-content">
+                                <div class="sequencing-header">
+                                    <h4>Sample #DNA-2024-001248</h4>
+                                    <span class="sequencing-time">Processing... 67% complete</span>
+                                </div>
+                                <div class="sequencing-details">
+                                    <span class="sequencing-species">Analysis in progress</span>
+                                    <span class="sequencing-confidence">ETA: 2.3 hours</span>
+                                </div>
+                                <div class="sequencing-location">Location: Konkan Coast Monitor</div>
+                            </div>
+                            <div class="processing-indicator">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 67%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sequencing-item">
+                            <div class="sequencing-status completed"></div>
+                            <div class="sequencing-content">
+                                <div class="sequencing-header">
+                                    <h4>Sample #DNA-2024-001246</h4>
+                                    <span class="sequencing-time">Completed 12 min ago</span>
+                                </div>
+                                <div class="sequencing-details">
+                                    <span class="sequencing-species">Rastrelliger kanagurta (Indian Mackerel)</span>
+                                    <span class="sequencing-confidence">Confidence: 97.8%</span>
+                                </div>
+                                <div class="sequencing-location">Location: Kerala Coastal Station</div>
+                            </div>
+                            <button class="view-details-btn">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reports-section" class="content-section">
+                <div class="section-header">
+                    <h2>Reports & Analytics</h2>
+                    <p>Comprehensive data analysis and reporting tools</p>
+                </div>
+
+                <!-- Report Generation -->
+                <div class="report-generation-section">
+                    <div class="report-builder">
+                        <h3>Generate Custom Report</h3>
+                        <div class="report-form">
+                            <div class="form-group">
+                                <label>Report Type</label>
+                                <select class="report-select">
+                                    <option>Biodiversity Assessment</option>
+                                    <option>Ocean Parameter Analysis</option>
+                                    <option>Species Population Trends</option>
+                                    <option>Environmental Impact Study</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Time Period</label>
+                                <select class="report-select">
+                                    <option>Last 30 Days</option>
+                                    <option>Last 3 Months</option>
+                                    <option>Last 6 Months</option>
+                                    <option>Last Year</option>
+                                    <option>Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Regions</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" checked> Arabian Sea
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" checked> Bay of Bengal
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox"> Indian Ocean
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox"> Andaman Sea
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="generate-report-btn">
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Generate Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Dashboard -->
+                <div class="analytics-dashboard">
+                    <div class="analytics-charts-grid">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Data Collection Trends</h3>
+                                <div class="trend-indicators">
+                                    <span class="trend-indicator up">↗ 23% increase</span>
+                                </div>
+                            </div>
+                            <canvas id="collectionTrendsChart"></canvas>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Research Impact Metrics</h3>
+                                <button class="export-btn" onclick="exportChart('impactChart')">Export</button>
+                            </div>
+                            <canvas id="impactChart"></canvas>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Seasonal Biodiversity Patterns</h3>
+                                <div class="season-controls">
+                                    <button class="season-btn active" data-season="all">All Seasons</button>
+                                    <button class="season-btn" data-season="monsoon">Monsoon</button>
+                                    <button class="season-btn" data-season="winter">Winter</button>
+                                    <button class="season-btn" data-season="summer">Summer</button>
+                                </div>
+                            </div>
+                            <canvas id="seasonalChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Reports -->
+                <div class="recent-reports-section">
+                    <div class="chart-header">
+                        <h3>Recent Reports</h3>
+                        <button class="view-all-btn">View All Reports</button>
+                    </div>
+                    <div class="reports-list">
+                        <div class="report-item">
+                            <div class="report-icon">📊</div>
+                            <div class="report-content">
+                                <h4>Q4 2024 Biodiversity Assessment</h4>
+                                <p>Comprehensive analysis of species diversity across all monitoring stations</p>
+                                <div class="report-meta">
+                                    <span class="report-date">Generated: Dec 15, 2024</span>
+                                    <span class="report-size">2.4 MB</span>
+                                </div>
+                            </div>
+                            <div class="report-actions">
+                                <button class="action-btn download">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn share">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="report-item">
+                            <div class="report-icon">🌊</div>
+                            <div class="report-content">
+                                <h4>Ocean Temperature Anomaly Report</h4>
+                                <p>Analysis of temperature variations and their impact on marine ecosystems</p>
+                                <div class="report-meta">
+                                    <span class="report-date">Generated: Dec 12, 2024</span>
+                                    <span class="report-size">1.8 MB</span>
+                                </div>
+                            </div>
+                            <div class="report-actions">
+                                <button class="action-btn download">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn share">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="report-item">
+                            <div class="report-icon">🧬</div>
+                            <div class="report-content">
+                                <h4>eDNA Species Detection Summary</h4>
+                                <p>Monthly summary of environmental DNA findings and new species discoveries</p>
+                                <div class="report-meta">
+                                    <span class="report-date">Generated: Dec 10, 2024</span>
+                                    <span class="report-size">3.1 MB</span>
+                                </div>
+                            </div>
+                            <div class="report-actions">
+                                <button class="action-btn download">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </button>
+                                <button class="action-btn share">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; CMLRE | Ministry of Earth Sciences | Marine Biodiversity Research Initiative</p>
+        </footer>
+    </div>
+
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal-content">
+            <div class="search-header">
+                <input type="text" placeholder="Search data, species, locations..." class="search-input">
+                <button class="search-close" onclick="closeSearchModal()">×</button>
+            </div>
+            <div class="search-results">
+                <div class="search-result-item">
+                    <span class="search-result-type">Species</span>
+                    <span class="search-result-title">Thunnus albacares (Yellowfin Tuna)</span>
+                </div>
+                <div class="search-result-item">
+                    <span class="search-result-type">Location</span>
+                    <span class="search-result-title">Arabian Sea Monitoring Station</span>
+                </div>
+                <div class="search-result-item">
+                    <span class="search-result-type">Parameter</span>
+                    <span class="search-result-title">Water Temperature Anomaly</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
