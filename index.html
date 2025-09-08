@@ -65,6 +65,12 @@
                         </svg>
                         DNA / eDNA
                     </a>
+                    <a href="#" class="nav-link" data-section="data-ingestion">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        Data Upload & Visualization
+                    </a>
                 </div>
                 <div class="nav-section">
                     <h3 class="nav-section-title">Analytics</h3>
@@ -641,6 +647,126 @@
                 </div>
             </section>
 
+            <!-- Data Ingestion Section -->
+            <section id="data-ingestion-section" class="content-section">
+                <div class="section-header">
+                    <h2>Data Upload & Visualization</h2>
+                    <p>Upload and visualize ocean and fish data from CSV or JSON files</p>
+                </div>
+
+                <!-- Data Upload Section -->
+                <div class="upload-section">
+                    <div class="upload-card">
+                        <div class="chart-header">
+                            <h3>Upload Data Files</h3>
+                            <div class="upload-info">
+                                <span class="info-badge">CSV</span>
+                                <span class="info-badge">JSON</span>
+                            </div>
+                        </div>
+                        
+                        <form id="uploadForm" class="upload-form">
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <div class="upload-icon">
+                                    <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                    </svg>
+                                </div>
+                                <div class="upload-text">
+                                    <h4>Drag & drop your files here</h4>
+                                    <p>or <span class="upload-link">browse files</span></p>
+                                    <small>Supports CSV and JSON files up to 10MB</small>
+                                </div>
+                                <input type="file" id="fileInput" accept=".csv,.json" multiple hidden>
+                            </div>
+                            
+                            <div class="file-list" id="fileList"></div>
+                            
+                            <div class="data-type-selection">
+                                <label>Data Type:</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="dataType" value="ocean_data" checked>
+                                        <span>Ocean Data (temperature, salinity, location, time)</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="dataType" value="fish_data">
+                                        <span>Fish Data (species_id, name, taxonomy, morphology, image_url)</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="upload-btn" id="uploadBtn" disabled>
+                                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                Upload Files
+                            </button>
+                        </form>
+                        
+                        <div class="upload-status" id="uploadStatus"></div>
+                    </div>
+                </div>
+
+                <!-- Data Visualization Section -->
+                <div class="visualization-section">
+                    <div class="viz-controls">
+                        <div class="chart-header">
+                            <h3>Data Visualization</h3>
+                            <div class="viz-controls-group">
+                                <button class="viz-btn active" data-chart="temperature">Temperature Trends</button>
+                                <button class="viz-btn" data-chart="salinity">Salinity by Location</button>
+                                <button class="viz-btn" data-chart="species">Species Distribution</button>
+                                <button class="refresh-data-btn" id="refreshDataBtn">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                    Refresh Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="visualization-grid">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3 id="currentChartTitle">Ocean Temperature vs Time</h3>
+                                <button class="export-btn" onclick="exportChart('dataChart')">Export</button>
+                            </div>
+                            <canvas id="dataChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Data Preview Table -->
+                    <div class="data-preview-section">
+                        <div class="chart-header">
+                            <h3>Data Preview</h3>
+                            <div class="table-controls">
+                                <select id="tableTypeSelect" class="filter-select">
+                                    <option value="ocean_data">Ocean Data</option>
+                                    <option value="fish_data">Fish Data</option>
+                                </select>
+                                <span class="record-count" id="recordCount">0 records</span>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table" id="dataTable">
+                                <thead id="tableHead">
+                                    <tr>
+                                        <th>No data available</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <tr>
+                                        <td>Upload data to see preview</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="reports-section" class="content-section">
                 <div class="section-header">
                     <h2>Reports & Analytics</h2>
@@ -848,5 +974,6 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="data-ingestion.js"></script>
 </body>
 </html>
